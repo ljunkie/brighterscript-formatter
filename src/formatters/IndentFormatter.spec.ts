@@ -163,4 +163,35 @@ describe('IndentFormatter', () => {
         const actual = format(input);
         expect(actual).to.equal(expected);
     });
+
+    it('handles indentation for })] with function call', () => {
+        const input = undent`
+            function GetOverflowActionFromMetadata(metadata as object) as object
+                if metadata._container.isLiveTV = true or metadata.type = "collection" then return []
+
+                return [API().CreateAction("pmsOverflow", "overflow-horizontal-alt", ltr("More"), {
+                    "data": {
+                        "originId": metadata._container._originId,
+                        "ratingKey": metadata["ratingKey"],
+                        "key": metadata["key"].Replace("/children", ""),
+                    },
+                })]
+            end function
+        `;
+        const expected = [
+            'function GetOverflowActionFromMetadata(metadata as object) as object',
+            '    if metadata._container.isLiveTV = true or metadata.type = "collection" then return []',
+            '',
+            '    return [API().CreateAction("pmsOverflow", "overflow-horizontal-alt", ltr("More"), {',
+            '        "data": {',
+            '            "originId": metadata._container._originId,',
+            '            "ratingKey": metadata["ratingKey"],',
+            '            "key": metadata["key"].Replace("/children", ""),',
+            '        },',
+            '    })]',
+            'end function'
+        ].join('\n');
+        const actual = format(input);
+        expect(actual).to.equal(expected);
+    });
 });
